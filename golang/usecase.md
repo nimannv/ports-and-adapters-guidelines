@@ -2,10 +2,10 @@
 **Path:** `internal/core/application/usecases/`
 
 ## Purpose
-The `usecases` package contains concrete implementations of the inbound ports. It defines *how* the application performs its specific tasks (application layer logic) by orchestrating domain logic, using outbound ports and other usecases.
+The `usecases` package contains concrete implementations of the [inbound ports](./inbound_port.md). It defines *how* the application performs its specific tasks (application layer logic) by orchestrating domain logic, using outbound ports and other usecases.
 
 ## Contains
-- **Usecase Implementations**: Go files implementing the interfaces defined in `internal/core/application/ports/inbound`.
+- **Usecase Implementations**: Go files implementing the interfaces defined in [inbound ports](./inbound_port.md).
 
 ## Principles & Rules
 

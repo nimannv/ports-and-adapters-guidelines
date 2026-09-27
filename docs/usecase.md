@@ -20,4 +20,4 @@ The `usecases` package contains concrete implementations of the [inbound ports](
     - Interactions with other usecases
 
 - **Transactional Consistency**:
-        - Often serves as the boundary for database transactions.
+    - Often serves as the boundary for database transactions.

@@ -9,6 +9,6 @@ The `core` layer encapsulates the heart of the application's business logic, com
 - **[application/](internal_core_application.md)**: Application-specific use cases and orchestration logic.
 
 ## Principles & Rules
-- **Technology Agnostic**: This layer must not have any direct dependencies on external frameworks or infrastructure (e.g., `net/http`, `database/sql`).
+- **Technology Agnostic**: This layer must not have any direct dependencies on external frameworks or infrastructure (e.g., `webservers`, `databases`, `message brokers`, ...).
 - **High Cohesion, Low Coupling**: Code within the core is tightly related to the business problem, interacting with external layers strictly through defined ports.
 - **Testable in Isolation**: The entire `core` layer must be unit-testable without requiring external infrastructure, using mocks for outbound ports.

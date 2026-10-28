@@ -43,10 +43,15 @@ Each boundary has its own data types, and every layer maps them at its edge:
 
 ![Data Flow](./diagrams/exported/DataFlow.svg)
 
-```
-external format ─► inbound adapter DTO ─► inbound port DTO ─► use case ─► domain (entities, value objects)
-                                                                 │
-external format ◄─ outbound adapter DTO ◄─ outbound port DTO ◄──┘
+```mermaid
+flowchart LR
+    ext_in["external format"] --> in_adapter["inbound adapter DTO"]
+    in_adapter --> in_port["inbound port DTO"]
+    in_port --> uc["use case"]
+    uc --> domain["domain (entities, value objects)"]
+    uc --> out_port["outbound port DTO"]
+    out_port --> out_adapter["outbound adapter DTO"]
+    out_adapter --> ext_out["external format"]
 ```
 
 Domain types never leave the core. See the [application layer](docs/internal_core_application.md#data-flow) for details.

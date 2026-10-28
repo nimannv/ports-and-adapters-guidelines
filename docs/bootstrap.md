@@ -1,11 +1,13 @@
-# Application Entry Points
-**Path:** `cmd/`
+# Application Bootstrap
+**Path:** `bootstrap/`
 
 ## Purpose
-The `cmd` directory contains the application's entry points, also known as the composition roots. These files are responsible for initializing the application, configuring its components, and starting the execution.
+The `bootstrap` directory contains the application's entry points, also known as the composition roots. These files are responsible for initializing the application, configuring its components, and starting the execution.
+
+> **Naming:** Go projects usually call this directory `cmd/`. We use `bootstrap/` because the name works in both Go and Python and says what the code does: it builds the application and starts it. In Python, `cmd` is a standard library module, and a top-level package named `cmd` would shadow it.
 
 ## Contains
-- **`cmd/[app_name]/[entrypoint].go`**: The entry point for a specific application component (e.g., `cmd/myapp/http.go`, `cmd/myapp/worker.go`, `cmd/myapp/cli.go`, ...).
+- **`bootstrap/[app_name]/[entrypoint].*`**: The entry point for a specific application component (e.g., `bootstrap/myapp/http.*`, `bootstrap/myapp/worker.*`, `bootstrap/myapp/cli.*`, ...).
 
 ## Principles & Rules
 - **Composition Root**: This is where all application layers (core, adapters, configuration and etc.) are wired together.

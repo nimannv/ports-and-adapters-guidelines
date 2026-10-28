@@ -18,11 +18,19 @@ The `application` layer defines the application's specific use cases and orchest
 - **No Infrastructure Detail**: Remains independent of specific technologies (e.g., HTTP, gRPC, SQL).
 
 ## Data Flow
-```
-inbound adapter DTO ─► inbound port DTO ─► use case ─► domain entities / value objects
-                                              │
-                                              └─► outbound port DTO ─► outbound adapter DTO (ORM model, API message, ...)
-```
+
+| Step | Who | Maps |
+|---|---|---|
+| 1 | [Inbound adapter](inbound_adapter.md) | external format (JSON, protobuf, ...) → inbound adapter DTO → inbound port DTO |
+| 2 | [Use case](usecase.md) | inbound port DTO → domain entities / value objects |
+| 3 | [Use case](usecase.md) | domain entities / value objects → outbound port DTO |
+| 4 | [Outbound adapter](outbound_adapter.md) | outbound port DTO → external format (ORM model, SQL row, API message, ...) |
+
+Results travel back the same way, in reverse. Errors are translated the same way: outbound adapters turn technology errors into outbound port errors, use cases turn domain errors into inbound port errors, and inbound adapters turn inbound port errors into protocol responses.
 
 ## Scaling
-Split `usecases/` by feature, then by actor, and let `ports/inbound/` follow the same split. Split `ports/outbound/` by the capability the core needs, never by technology. See the [Per-Layer Guide](../README.md#per-layer-guide).
+- **[usecases/](usecase.md#scaling)**: by feature, then actor.
+- **[ports/inbound/](inbound_port.md#scaling)**: follows the use-case split.
+- **[ports/outbound/](outbound_port.md#scaling)**: by capability, never technology.
+
+When the whole application layer needs to be split per bounded context, see [Core Scaling](internal_core.md#scaling).

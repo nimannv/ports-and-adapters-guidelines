@@ -11,19 +11,17 @@ The `adapters` layer houses all components responsible for interacting with the 
 ## Principles & Rules
 - **Outbound Adapters**: Outbound adapters must implement the outbound ports defined in `internal/core/application/ports/outbound`.
 - **Outbound Adapters DTOs**: Outbound adapters use outbound port DTOs as input and output. They map outbound port DTOs to external data formats (e.g., SQL rows, MongoDB documents, external API responses) and vice versa.
-
 - **Inbound Adapters**: Inbound adapters use inbound ports defined in `internal/core/application/ports/inbound` to call usecases (inbound port implementations).
 - **Inbound Adapters DTOs**: Inbound adapters use their own DTOs to interact with external systems (e.g., HTTP JSON, gRPC messages) and map them to inbound port DTOs.
-
 - **Ports Only**: Adapters depend on ports only. They never import the `domain` or `usecases` packages.
 - **No Adapter-to-Adapter Calls**: An inbound adapter never calls an outbound adapter directly; it always goes through a use case.
 - **Technology Specific**: This is the only layer where technology-specific code (e.g., Go `net/http`, `database/sql`, gRPC generated code; Python FastAPI, SQLAlchemy, psycopg) is allowed and expected.
 - **No Core Logic**: Adapters contain minimal to no business logic. Their primary role is translation and interaction with external systems.
 
 ## Scaling
-Adapters are the only layer split by technology:
+Adapters are the only layer split by **technology**. Technology always comes first, then scope and domain:
 
-- **inbound/**: technology → scope → domain (→ version), e.g. `http/public/order/`, `http/admin/`, `grpc/v1/`.
-- **outbound/**: technology / external system → domain, e.g. `postgres/order/`, `stripe/`.
+- **[inbound/](inbound_adapter.md#scaling)**: technology → scope → domain (→ version).
+- **[outbound/](outbound_adapter.md#scaling)**: technology / external system → domain.
 
-See the [Per-Layer Guide](../README.md#per-layer-guide).
+See [Scale](../README.md#scale) for the general principles.

@@ -15,15 +15,17 @@ Ports are interfaces that define the contracts for interaction with the applicat
 - **Own Their DTOs and Errors**: Each port declares the data it accepts and returns, and the errors its callers can handle. Domain types never appear in a port signature.
 
 ## Go and Python
+
 | Concept | Go | Python |
 |---|---|---|
-| Port | `interface` | `typing.Protocol` (or `abc.ABC` if you want explicit inheritance) |
-| DTO | plain `struct` | `@dataclass(frozen=True)` |
-| Error | sentinel `var ErrX = errors.New(...)` or error type | `class XError(Exception)` |
-| Implementation check | `var _ inbound.PlaceOrder = (*placeOrder)(nil)` | type checker (`mypy` / `pyright`) |
-| Context / cancellation | first parameter `ctx context.Context` | not needed (use `async def` if the app is async) |
+| Port | `interface` | `typing.Protocol` (or `abc.ABC` for explicit inheritance) |
+| DTO | plain `struct` | frozen `dataclass` |
+| Error | error value or error type | exception class |
+| Implementation check | compile-time interface assertion | static type checker (`mypy` / `pyright`) |
+| Cancellation / deadlines | `context.Context` as first parameter | not needed (use `async` if the app is async) |
 
-> **Async Python:** if the application is async, make every port method `async def` and implement them with async drivers. Don't mix sync and async ports in one application.
+> **Async Python:** if the application is async, make every port method `async` and implement them with async drivers. Don't mix sync and async ports in one application.
 
 ## Scaling
-Inbound ports follow the use-case split. Outbound ports are split by the capability the core needs (interface segregation), never by technology. See the [Per-Layer Guide](../README.md#per-layer-guide).
+- **[inbound/](inbound_port.md#scaling)**: follows the use-case split.
+- **[outbound/](outbound_port.md#scaling)**: by capability the core needs, never by technology.

@@ -13,7 +13,9 @@ The `internal` package contains the core business logic and all implementation d
 ## Principles & Rules
 - **Encapsulation**: All application-specific logic must reside here.
 - **Separation of Concerns**: Business logic (core) is kept strictly separate from technical details (adapters).
-- **Dependency Rule**: Dependencies always point inward, toward the core. The core never imports adapters or bootstrap code.
+- **Dependency Rule**: Dependencies always point inward, toward the core (see below).
+
+## Dependency Rule
 
 | Package | May depend on |
 |---|---|
@@ -25,47 +27,18 @@ The `internal` package contains the core business logic and all implementation d
 | `adapters/outbound` | `ports/outbound` |
 | `bootstrap/` (outside `internal/`) | Everything, for wiring only |
 
+- The core never imports adapters or bootstrap code.
+- Adapters never import `domain` or `usecases`.
+- Adapters never import each other; an inbound adapter reaches an outbound adapter only through a use case.
+
 ## Enforcing Boundaries
 - **Go**: The compiler only stops code outside the module from importing `internal/`. It does not check the layer rules inside it. Use a linter such as [depguard](https://github.com/OpenPeeDeeP/depguard) (via `golangci-lint`) or [go-arch-lint](https://github.com/fe3dback/go-arch-lint).
-- **Python**: Nothing is enforced by the language. Every directory is a regular package (with an `__init__.py`), and the rules are checked with [import-linter](https://github.com/seddonym/import-linter):
-
-```ini
-# .importlinter
-[importlinter]
-root_package = internal
-
-[importlinter:contract:layers]
-name = Domain is the innermost layer
-type = layers
-layers =
-    internal.adapters
-    internal.core.application
-    internal.core.domain
-
-[importlinter:contract:adapters-use-ports-only]
-name = Adapters depend on ports only
-type = forbidden
-source_modules = internal.adapters
-forbidden_modules =
-    internal.core.domain
-    internal.core.application.usecases
-```
-
-## Conventions Used in Examples
-All docs share one running example: a small shop that lets a customer **place an order**. It uses the flat layout (Stage 1 in [Growth Stages of the Core](../README.md#growth-stages-of-the-core)).
-
-- **Go**: module `example.com/shop`; files under `internal/...` end in `.go`.
-- **Python**: packages are imported from the repository root (`internal.core.domain.order`); files end in `.py`.
-
-| Layer | Go | Python |
-|---|---|---|
-| [Domain](domain.md) | `internal/core/domain/order.go` | `internal/core/domain/order.py` |
-| [Inbound port](inbound_port.md) | `internal/core/application/ports/inbound/place_order.go` | `internal/core/application/ports/inbound/place_order.py` |
-| [Outbound port](outbound_port.md) | `internal/core/application/ports/outbound/order_repository.go` | `internal/core/application/ports/outbound/order_repository.py` |
-| [Use case](usecase.md) | `internal/core/application/usecases/place_order.go` | `internal/core/application/usecases/place_order.py` |
-| [Inbound adapter](inbound_adapter.md) | `internal/adapters/inbound/http/place_order.go` | `internal/adapters/inbound/http/place_order.py` |
-| [Outbound adapter](outbound_adapter.md) | `internal/adapters/outbound/postgres/order_repository.go` | `internal/adapters/outbound/postgres/order_repository.py` |
-| [Bootstrap](bootstrap.md) | `bootstrap/main.go` | `bootstrap/main.py` |
+- **Python**: The language enforces nothing. Make every directory a regular package (with an `__init__.py`) and check the rules with [import-linter](https://github.com/seddonym/import-linter), e.g. contracts that say `internal.core` must not import `internal.adapters`, `internal.adapters` must not import `internal.core.domain`, and `order.domain` must not import `billing.domain`.
 
 ## Scaling
-The core and the adapters scale on their own because ports keep them apart. See [internal/ scaling](../README.md#internal).
+The core and the adapters scale on their own, because the ports keep them apart:
+
+- **[core/](internal_core.md#scaling)**: grows in stages, from flat layers to bounded-context modules.
+- **[adapters/](adapters.md#scaling)**: split by technology first, then scope and domain.
+
+See [Scale](../README.md#scale) for the general principles.

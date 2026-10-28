@@ -15,7 +15,7 @@ Inbound ports exist for three reasons:
 - **execute method**: Each usecase interface has only one public method called `exec` (`Exec` in Go, since exported names are capitalized). It takes the input DTO as parameter and returns the output DTO or an error.
 - **DTOs**: Data Transfer Objects used to pass input/output data between [inbound adapters](./inbound_adapter.md) and the core.
     > DTOs are the main reason for inbound ports (see [Purpose](#purpose)). Without them, a port would be just an interface with an `exec` method.
-- **Errors**: The errors callers can handle (e.g., `ErrInvalidOrder`). Use cases translate domain errors into them, so inbound adapters never import the domain.
+- **Errors**: The errors callers can handle (e.g., `InvalidOrder`, `OrderNotFound`). Use cases translate domain errors into them, so inbound adapters never import the domain.
 
 ## Principles & Rules
 - **Contract Definition**: Define what the system can do and how other parts can use it.
@@ -24,70 +24,18 @@ Inbound ports exist for three reasons:
 - **Technology Independent**: They must not reference any specific technology (e.g., HTTP status codes or gRPC metadata); this is the [inbound adapters](inbound_adapter.md) responsibility.
 - **One File per Use Case**: Keep the interface, its DTOs, and its errors together (e.g., `place_order.*`).
 
-## Example
-
-```go
-// internal/core/application/ports/inbound/place_order.go
-package inbound
-
-import (
-	"context"
-	"errors"
-)
-
-var ErrInvalidOrder = errors.New("invalid order")
-
-type PlaceOrderItem struct {
-	ProductID string
-	Quantity  int
-}
-
-type PlaceOrderInput struct {
-	CustomerID string
-	Items      []PlaceOrderItem
-}
-
-type PlaceOrderOutput struct {
-	OrderID string
-	Status  string
-}
-
-type PlaceOrder interface {
-	Exec(ctx context.Context, in PlaceOrderInput) (PlaceOrderOutput, error)
-}
-```
-
-```python
-# internal/core/application/ports/inbound/place_order.py
-from dataclasses import dataclass
-from typing import Protocol
-
-
-class InvalidOrderError(Exception):
-    pass
-
-
-@dataclass(frozen=True)
-class PlaceOrderItem:
-    product_id: str
-    quantity: int
-
-
-@dataclass(frozen=True)
-class PlaceOrderInput:
-    customer_id: str
-    items: tuple[PlaceOrderItem, ...]
-
-
-@dataclass(frozen=True)
-class PlaceOrderOutput:
-    order_id: str
-    status: str
-
-
-class PlaceOrder(Protocol):
-    def exec(self, data: PlaceOrderInput) -> PlaceOrderOutput: ...
-```
-
 ## Scaling
-Inbound ports follow the use-case split: when `usecases/order/` appears, so does `ports/inbound/order/`. See the [Per-Layer Guide](../README.md#per-layer-guide).
+Inbound ports **mirror the use cases**. They have no split rules of their own: whenever [usecases/](usecase.md#scaling) gets a new directory, `ports/inbound/` gets the same one.
+
+```
+ports/inbound/                 usecases/
+├── order/                     ├── order/
+│   ├── place_order.*          │   ├── place_order.*
+│   ├── cancel_order.*         │   ├── cancel_order.*
+│   └── admin/                 │   └── admin/
+│       └── refund_order.*     │       └── refund_order.*
+└── customer/                  └── customer/
+    └── register_customer.*        └── register_customer.*
+```
+
+Keeping both trees identical means the port for any use case is always found at the same relative path.

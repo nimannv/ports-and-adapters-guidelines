@@ -6,7 +6,7 @@ It decouples core business logic from external infrastructure, delivering system
 
 In this approach, the focus is placed on strict decoupling and clarity of logic, never sacrificing clean boundaries for the sake of simpler code generation. With code generation becoming increasingly easier using agents, reducing boilerplate is no longer a reason to compromise architectural design. The primary goal is **predictability of implementation in each layer**—ensuring consistent, well-defined responsibilities and seamless maintainability.
 
-![image](./diagram.svg)
+![image](./diagrams/exported/Hexagonal.svg)
 
 
 ## Folders Structure
@@ -40,6 +40,8 @@ The core never imports adapters or bootstrap code. See [internal/](docs/internal
 ## Data Flow
 
 Each boundary has its own data types, and every layer maps them at its edge:
+
+![Data Flow](./diagrams/exported/DataFlow.svg)
 
 ```
 external format ─► inbound adapter DTO ─► inbound port DTO ─► use case ─► domain (entities, value objects)

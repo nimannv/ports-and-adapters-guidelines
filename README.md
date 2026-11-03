@@ -132,3 +132,11 @@ The same rules apply to every other directory as it appears, for example:
 - ...
 
 > **Rule of thumb:** Don't create a level before you need it. Add one when a directory has too many unrelated files, or when a team or module needs a clear boundary.
+
+## Sample Projects
+
+Project requirements and domain specifications demonstrating practical systems before implementation:
+
+- **[Simple Task Management](sample-projects/simple-task-management.md)**: Kanban system (Boards, Columns, Tasks, WIP limits) with CLI and REST API interfaces, and switchable SQLite / PostgreSQL persistence.
+- **[Scaled Task Management](sample-projects/scaled-task-management.md)**: Multi-user system (Users, Subscriptions, Invoices, Boards, Tasks) featuring subscription access gating, automated invoicing, payment gateway integrations (PayPal, Crypto, Adyen), and switchable SQLite / PostgreSQL storage.
+

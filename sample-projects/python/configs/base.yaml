@@ -1,0 +1,6 @@
+db_driver: "sqlite"
+database_url: "sqlite:///tasks.db"
+api_host: "0.0.0.0"
+api_port: 8000
+log_level: "INFO"
+

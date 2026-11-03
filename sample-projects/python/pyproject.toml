@@ -1,0 +1,33 @@
+[project]
+name = "simple-task-management"
+version = "1.0.0"
+description = "Kanban-style Task Management System built with Ports and Adapters (Hexagonal Architecture) in Python"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.28.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.9",
+    "typer[all]>=0.12.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0.1",
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
+    "import-linter>=2.0",
+]
+
+[project.scripts]
+task-cli = "bootstrap.cli.main:run"
+task-api = "bootstrap.api.main:run"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning"]
+

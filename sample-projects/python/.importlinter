@@ -1,0 +1,74 @@
+[importlinter]
+root_packages =
+    internal
+    bootstrap
+    configs
+
+[importlinter:contract:core-does-not-import-adapters]
+name = Core layer must not import adapters
+type = forbidden
+source_modules =
+    internal.core
+forbidden_modules =
+    internal.adapters
+    bootstrap
+
+[importlinter:contract:domain-depends-on-nothing]
+name = Domain layer must not import application, adapters or bootstrap
+type = forbidden
+source_modules =
+    internal.core.domain
+forbidden_modules =
+    internal.core.application
+    internal.adapters
+    bootstrap
+
+[importlinter:contract:inbound-ports-independent]
+name = Inbound ports must not import domain, usecases, or adapters
+type = forbidden
+source_modules =
+    internal.core.application.ports.inbound
+forbidden_modules =
+    internal.core.domain
+    internal.core.application.usecases
+    internal.adapters
+    bootstrap
+
+[importlinter:contract:outbound-ports-independent]
+name = Outbound ports must not import domain, usecases, or adapters
+type = forbidden
+source_modules =
+    internal.core.application.ports.outbound
+forbidden_modules =
+    internal.core.domain
+    internal.core.application.usecases
+    internal.adapters
+    bootstrap
+
+[importlinter:contract:adapters-do-not-import-domain-or-usecases]
+name = Adapters must not import domain or usecases
+type = forbidden
+source_modules =
+    internal.adapters
+forbidden_modules =
+    internal.core.domain
+    internal.core.application.usecases
+
+[importlinter:contract:inbound-adapters-cannot-import-outbound]
+name = Inbound adapters must not import outbound adapters or outbound ports
+type = forbidden
+source_modules =
+    internal.adapters.inbound
+forbidden_modules =
+    internal.adapters.outbound
+    internal.core.application.ports.outbound
+
+[importlinter:contract:outbound-adapters-cannot-import-inbound]
+name = Outbound adapters must not import inbound adapters or inbound ports
+type = forbidden
+source_modules =
+    internal.adapters.outbound
+forbidden_modules =
+    internal.adapters.inbound
+    internal.core.application.ports.inbound
+

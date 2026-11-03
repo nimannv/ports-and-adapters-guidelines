@@ -1,0 +1,18 @@
+.agent
+.agents
+.agents/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+

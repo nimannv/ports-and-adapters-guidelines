@@ -1,0 +1,80 @@
+# golangci-lint v2 configuration enforcing the hexagonal dependency rule.
+# Replace MODULE with the module path from go.mod (scaffold.sh does this for you).
+# For golangci-lint v1, drop `version: "2"` and move `linters.settings` to top-level `linters-settings`.
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - depguard
+  settings:
+    depguard:
+      rules:
+        domain:
+          list-mode: strict
+          files:
+            - "**/internal/core/domain/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/ports-and-adapters/simple-task-management/internal/core/domain
+        inbound-ports:
+          list-mode: strict
+          files:
+            - "**/internal/core/application/ports/inbound/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/ports-and-adapters/simple-task-management/internal/core/application/ports/inbound
+        outbound-ports:
+          list-mode: strict
+          files:
+            - "**/internal/core/application/ports/outbound/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/ports-and-adapters/simple-task-management/internal/core/application/ports/outbound
+        usecases:
+          list-mode: strict
+          files:
+            - "**/internal/core/application/usecases/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - github.com/ports-and-adapters/simple-task-management/internal/core/domain
+            - github.com/ports-and-adapters/simple-task-management/internal/core/application/ports
+        inbound-adapters:
+          list-mode: lax
+          files:
+            - "**/internal/adapters/inbound/**"
+          deny:
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/domain
+              desc: adapters must not import the domain; use inbound port DTOs
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/application/usecases
+              desc: inbound adapters call use cases through inbound ports only
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/application/ports/outbound
+              desc: inbound adapters must not use outbound ports
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/adapters/outbound
+              desc: adapters must not call each other; go through a use case
+            - pkg: github.com/ports-and-adapters/simple-task-management/configs
+              desc: configuration is loaded in bootstrap and passed as plain values
+            - pkg: github.com/ports-and-adapters/simple-task-management/bootstrap
+              desc: nothing imports the composition root
+        outbound-adapters:
+          list-mode: lax
+          files:
+            - "**/internal/adapters/outbound/**"
+          deny:
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/domain
+              desc: adapters must not import the domain; use outbound port DTOs
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/application/usecases
+              desc: outbound adapters must not import use cases
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/core/application/ports/inbound
+              desc: outbound adapters must not use inbound ports
+            - pkg: github.com/ports-and-adapters/simple-task-management/internal/adapters/inbound
+              desc: adapters must not call each other
+            - pkg: github.com/ports-and-adapters/simple-task-management/configs
+              desc: configuration is loaded in bootstrap and passed as plain values
+            - pkg: github.com/ports-and-adapters/simple-task-management/bootstrap
+              desc: nothing imports the composition root
+

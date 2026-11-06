@@ -1,0 +1,3 @@
+# Shared defaults. Per-environment files override only what they need;
+# environment variables override files.
+log_level: info
